@@ -24,15 +24,15 @@ export const getAdditionalService = async (req, res) => {
 
 //El siguiente código crea un servicio adicional
 export const createAdditionalService = async (req, res) => {
-    const {nombre, descripcion, precio} = req.body;
+    const {nombre_serv, descripcion_serv, precio_serv} = req.body;
     try {
         //rows es un arreglo de objetos que contiene los datos de la consulta sql 
-        const [rows] = await pool.query("INSERT INTO servicio_adicional(nombre, descripcion, precio) VALUES (?, ?, ?)", [nombre, descripcion, precio]);
+        const [rows] = await pool.query("INSERT INTO servicio_adicional(nombre_serv, descripcion_serv, precio_serv) VALUES (?, ?, ?)", [nombre_serv, descripcion_serv, precio_serv]);
         res.send({
             id: rows.insertId,
-            nombre,
-            descripcion,
-            precio
+            nombre_serv,
+            descripcion_serv,
+            precio_serv
         });
     } catch (error) {
         console.log(error);
@@ -43,10 +43,10 @@ export const createAdditionalService = async (req, res) => {
 //El siguiente código actualiza un servicio adicional
 export const updateAdditionalService = async (req, res) => {
     const {id} = req.params;
-    const {nombre, descripcion, precio} = req.body;
+    const {nombre_serv, descripcion_serv, precio_serv} = req.body;
     //req.body es el objeto que se envia en el body de la peticion
     try {
-        const [result] = await pool.query("UPDATE servicio_adicional SET nombre = IFNULL(?, nombre), descripcion = IFNULL(?, descripcion), precio = IFNULL(?, precio) WHERE id_serv_adicional = ?", [nombre, descripcion, precio, id]);
+        const [result] = await pool.query("UPDATE servicio_adicional SET nombre_serv = IFNULL(?, nombre_serv), descripcion_serv = IFNULL(?, descripcion_serv), precio_serv = IFNULL(?, precio_serv) WHERE id_serv_adicional = ?", [nombre_serv, descripcion_serv, precio_serv, id]);
         if (!result.affectedRows) return res.status(404).json({msg: "No se encontró ningun servicio adicional"});
         const [rows] = await pool.query("SELECT * FROM servicio_adicional WHERE id_serv_adicional = ?", [id]);
         res.json(rows[0]);

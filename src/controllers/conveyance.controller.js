@@ -31,16 +31,16 @@ export const getConveyance = async (req, res) => {
 
 // Código que crea un tipo de transporte
 export const createConveyance = async (req, res) => {
-  const { nombre, descripcion } = req.body;
+  const { nombre_transporte, descripcion_transporte } = req.body;
   try {
     const [rows] = await pool.query(
-      "INSERT INTO medio_transporte(nombre, descripcion) VALUES (?, ?)",
-      [nombre, descripcion]
+      "INSERT INTO medio_transporte(nombre_transporte, descripcion_transporte) VALUES (?, ?)",
+      [nombre_transporte, descripcion_transporte]
     );
     res.send({
       id: rows.insertId,
-      nombre,
-      descripcion,
+      nombre_transporte,
+      descripcion_transporte,
     });
   } catch (error) {
     return res
@@ -52,12 +52,12 @@ export const createConveyance = async (req, res) => {
 // Código que actualiza un tipo de transporte
 export const updateConveyance = async (req, res) => {    
   const { id } = req.params;
-  const { nombre, descripcion } = req.body;
+  const { nombre_transporte, descripcion_transporte } = req.body;
   //req.body es el objeto que se envia en el body de la peticion
   try {
     const [result] = await pool.query(
-      "UPDATE medio_transporte SET nombre = IFNULL(?, nombre), descripcion = IFNULL(?, descripcion) WHERE id_transporte = ?",
-      [nombre, descripcion, id]
+      "UPDATE medio_transporte SET nombre_transporte = IFNULL(?, nombre_transporte), descripcion_transporte = IFNULL(?, descripcion_transporte) WHERE id_transporte = ?",
+      [nombre_transporte, descripcion_transporte, id]
     );
     if (!result.affectedRows)
       return res

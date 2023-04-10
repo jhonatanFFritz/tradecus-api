@@ -24,14 +24,14 @@ export const getPaymentMethod = async (req, res) => {
 
 //El siguiente código crea un metodo de pago
 export const createPaymentMethod = async (req, res) => {
-    const {nombre, descripcion} = req.body;
+    const {nombre_pago, descripcion_pago} = req.body;
     try {
         //rows es un arreglo de objetos que contiene los datos de la consulta sql 
-        const [rows] = await pool.query("INSERT INTO metodo_pago(nombre, descripcion) VALUES (?, ?)", [nombre, descripcion]);
+        const [rows] = await pool.query("INSERT INTO metodo_pago(nombre_pago, descripcion_pago) VALUES (?, ?)", [nombre_pago, descripcion_pago]);
         res.send({
             id: rows.insertId,
-            nombre,
-            descripcion
+            nombre_pago,
+            descripcion_pago
         });
     } catch (error) {
         console.log(error);
@@ -42,10 +42,10 @@ export const createPaymentMethod = async (req, res) => {
 //El siguiente código actualiza un metodo de pago   
 export const updatePaymentMethod = async (req, res) => {
     const {id} = req.params;
-    const {nombre, descripcion} = req.body;
+    const {nombre_pago, descripcion_pago} = req.body;
     //req.body es el objeto que se envia en el body de la peticion
     try {
-        const [result] = await pool.query("UPDATE metodo_pago SET nombre = IFNULL(?, nombre), descripcion = IFNULL(?, descripcion) WHERE id_metodo_pago = ?", [nombre, descripcion, id]);
+        const [result] = await pool.query("UPDATE metodo_pago SET nombre_pago = IFNULL(?, nombre_pago), descripcion_pago = IFNULL(?, descripcion_pago) WHERE id_metodo_pago = ?", [nombre_pago, descripcion_pago, id]);
         if (!result.affectedRows) return res.status(404).json({msg: "No se encontró ningun metodo de pago"});
         const [rows] = await pool.query("SELECT * FROM metodo_pago WHERE id_metodo_pago = ?", [id]);
         res.json(rows[0]);

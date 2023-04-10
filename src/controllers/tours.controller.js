@@ -25,17 +25,18 @@ export const getTour = async (req, res) => {
 
 //El siguiente código crea un tour
 export const createTour = async (req, res) => {
-  const { nombre, precio, duracion } = req.body;
+  const { nombre_tour, precio_tour, duracion_tour, descripcion_tour } = req.body;
   try {
   const [rows] = await pool.query(
-    "INSERT INTO tour(nombre, precio, duracion) VALUES (?, ?, ?)",
-    [nombre, precio, duracion]
+    "INSERT INTO tour(nombre, precio, duracion) VALUES (?, ?, ?,?)",
+    [nombre_tour, _tour, duracion_tour, descripcion_tour]
   );
   res.send({
     id: rows.insertId,
-    nombre,
-    precio,
-    duracion,
+    nombre_tour,
+    precio_tour,
+    duracion_tour,
+    descripcion_tour,
   });
   } catch (error) {
     return res.status(500).json({ msg: "Error al crear el tour" });
@@ -45,14 +46,14 @@ export const createTour = async (req, res) => {
 //El siguiente código actualiza un tour
 export const updateTour = async (req, res) => {
   const { id } = req.params;
-  const { nombre, precio, duracion } = req.body;
+  const { nombre_tour, precio_tour, duracion_tour, descripcion_tour } = req.body;
   //req.body es el objeto que se envia en el body de la peticion
   try {
     
 
   const [result] = await pool.query(
-    "UPDATE tour SET nombre = IFNULL(?, nombre), precio = IFNULL(?, precio), duracion = IFNULL(?, duracion) WHERE id_tour = ?",
-    [nombre, precio, duracion, id]
+    "UPDATE tour SET nombre_tour = IFNULL(?, nombre_tour), precio_tour = IFNULL(?, precio_tour), duracion_tour = IFNULL(?, duracion_tour), descripcion_tour = IFNULL(?, descripcion_tour) WHERE id_tour = ?",
+    [nombre_tour, precio_tour, duracion_tour, descripcion_tour, id]
   );
   if (!result.affectedRows)
     return res.status(404).json({ msg: "No se encontró ningun tour" });

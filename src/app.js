@@ -1,4 +1,5 @@
 import express from "express"; // ES6 import syntax (Node.js 14+)
+import cors from "cors";
 import toursRoutes from "./routes/tours.routes.js";
 import indexRoutes from "./routes/index.routes.js";
 import doctypeRoutes from "./routes/doctype.routes.js";
@@ -8,6 +9,8 @@ import additionalServiceRoutes from "./routes/additionalService.routes.js";
 
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json()); // Parse JSON bodies
 
