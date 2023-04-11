@@ -1,17 +1,15 @@
 import { Router } from "express";
-import {
-  getPaymentMethods,
-  getPaymentMethod,
-  createPaymentMethod,
-  updatePaymentMethod,
-  deletePaymentMethod,
-} from "../controllers/paymentMethod.controller.js";
+import {getAllPaymentMethods} from "../controllers/payment_method/getAllPaymentMethods.controller.js";
+import { getOnePaymentMethod } from "../controllers/payment_method/getOnePaymentMethod.controllers.js";
+import { addNewPaymentMethod } from "../controllers/payment_method/addNewPaymentMethod.controller.js";
+import { updateOnePaymentMethod } from "../controllers/payment_method/updateOnePaymentMethod.controller.js";
+import { deleteOnePaymentMethod } from "../controllers/payment_method/deleteOnePaymentMethod.controller.js";
 
 const router = Router();
-router.get("/paymentMethods", getPaymentMethods);
-router.get("/paymentMethods/:id", getPaymentMethod);
-router.post("/paymentMethods", createPaymentMethod);
-router.patch("/paymentMethods/:id", updatePaymentMethod);
-router.delete("/paymentMethods/:id", deletePaymentMethod);
+router.get("/paymentMethods", getAllPaymentMethods);
+router.get("/paymentMethods/:id", getOnePaymentMethod);
+router.post("/paymentMethods", addNewPaymentMethod);
+router.patch("/paymentMethods/:id", updateOnePaymentMethod);
+router.delete("/paymentMethods/:id", deleteOnePaymentMethod);
 
 export default router;

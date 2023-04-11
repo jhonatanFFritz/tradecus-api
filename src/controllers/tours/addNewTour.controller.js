@@ -1,4 +1,4 @@
-import { pool } from "../db.js";
+import { pool } from "../../dbconection/db.js";
 import multer from "multer";
 
 //El siguinete código crea una transaccion para crear un tour y sus imagenes
