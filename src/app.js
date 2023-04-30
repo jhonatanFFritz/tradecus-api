@@ -6,7 +6,7 @@ import doctypeRoutes from "./routes/doctype.routes.js";
 import conveyanceRoutes from "./routes/conveyance.routes.js";
 import paymentMethodRoutes from "./routes/paymentMethod.routes.js";
 import additionalServiceRoutes from "./routes/additionalService.routes.js";
-import imgRoutes from "../src/controllers/images/img.routes.js";
+import imgRoutes from "../src/routes/img.routes.js";
 
 const app = express();
 app.use(cors());

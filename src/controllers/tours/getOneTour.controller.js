@@ -18,7 +18,7 @@ export const getOneTour = async (req, res) => {
         precio_tour: rows[0].precio_tour,
         precio_promo_tour: rows[0].precio_promo_tour,
         duracion_tour: rows[0].duracion_tour,
-        descripcion: rows[0].descripcion,
+        descripcion_tour: rows[0].descripcion_tour,
         estado_tour: rows[0].estado_tour,
         imagenes: [],
       };
