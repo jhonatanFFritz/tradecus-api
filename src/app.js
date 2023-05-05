@@ -7,6 +7,7 @@ import conveyanceRoutes from "./routes/conveyance.routes.js";
 import paymentMethodRoutes from "./routes/paymentMethod.routes.js";
 import additionalServiceRoutes from "./routes/additionalService.routes.js";
 import imgRoutes from "../src/routes/img.routes.js";
+import rolRoutes from "../src/routes/rol.routes.js";
 
 const app = express();
 app.use(cors());
@@ -20,6 +21,7 @@ app.use("/api", paymentMethodRoutes);
 app.use("/api", additionalServiceRoutes);
 app.use("/api", imgRoutes);
 app.use("/api", toursRoutes);
+app.use("/api", rolRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ msg: "Página no encontrada" });
