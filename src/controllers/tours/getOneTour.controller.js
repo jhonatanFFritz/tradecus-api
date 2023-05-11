@@ -6,7 +6,7 @@ export const getOneTour = async (req, res) => {
       `SELECT tour.*, imagenes.*
       FROM tour
       INNER JOIN imagenes
-      ON tour.id_tour = imagenes.tour_id_tour WHERE id_tour = ?`,
+      ON tour.id_tour = imagenes.tour_id WHERE id_tour = ?`,
       [req.params.id]
     );
     if (!rows.length)
@@ -27,7 +27,7 @@ export const getOneTour = async (req, res) => {
           id_img: rows[i].id_img,
           nombre_img: rows[i].nombre_img,
           url_img: rows[i].url_img,
-          tour_id_tour: rows[i].tour_id_tour,
+          tour_id: rows[i].tour_id,
         };
         tour.imagenes.push(imagen);
       }

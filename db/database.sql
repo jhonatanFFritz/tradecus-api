@@ -21,11 +21,12 @@ CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `tradecus` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
 USE `mydb` ;
+USE `tradecus` ;
 
 -- -----------------------------------------------------
--- Table `mydb`.`cabecera`
+-- Table `tradecus`.`cabecera`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`cabecera` (
+CREATE TABLE IF NOT EXISTS `tradecus`.`cabecera` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `numero_serie` VARCHAR(45) NOT NULL,
   `nombre_empresa` VARCHAR(200) NOT NULL,
@@ -34,9 +35,23 @@ CREATE TABLE IF NOT EXISTS `mydb`.`cabecera` (
   `website` VARCHAR(200) NOT NULL,
   `celular` VARCHAR(20) NOT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
-USE `tradecus` ;
+
+-- -----------------------------------------------------
+-- Table `tradecus`.`tipo_doc`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `tradecus`.`tipo_doc` (
+  `id_tipo_doc` INT NOT NULL AUTO_INCREMENT,
+  `nombre_doc` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id_tipo_doc`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
 
 -- -----------------------------------------------------
 -- Table `tradecus`.`rol`
@@ -58,52 +73,15 @@ CREATE TABLE IF NOT EXISTS `tradecus`.`usuario` (
   `nombre` VARCHAR(100) NOT NULL,
   `password` VARCHAR(200) NOT NULL,
   `email` VARCHAR(100) NOT NULL,
-  `fecha_creado` TIMESTAMP NULL,
+  `fecha_creado` TIMESTAMP NULL DEFAULT NULL,
   `id_rol` INT NOT NULL,
-  PRIMARY KEY (`id_usuario`),
-  INDEX `id_rol` (`id_rol` ASC) VISIBLE,
+  PRIMARY KEY (`id_usuario`, `id_rol`),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
+  INDEX `id_rol` (`id_rol` ASC) VISIBLE,
   CONSTRAINT `usuario_ibfk_1`
     FOREIGN KEY (`id_rol`)
     REFERENCES `tradecus`.`rol` (`id_rol`))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
--- Table `tradecus`.`reserva`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `tradecus`.`reserva` (
-  `id_reserva` INT NOT NULL AUTO_INCREMENT,
-  `codigo_reserva` VARCHAR(8) NOT NULL,
-  `fecha_reserva` DATE NOT NULL,
-  `fecha_llegada` DATE NOT NULL,
-  `num_visitantes` INT NOT NULL,
-  `precio_reserva` DECIMAL(7,2) NOT NULL,
-  `fecha_creado` TIMESTAMP NULL,
-  `id_usuario` INT NOT NULL,
-  PRIMARY KEY (`id_reserva`, `id_usuario`),
-  INDEX `fk_reserva_usuario1_idx` (`id_usuario` ASC) VISIBLE,
-  CONSTRAINT `fk_reserva_usuario1`
-    FOREIGN KEY (`id_usuario`)
-    REFERENCES `tradecus`.`usuario` (`id_usuario`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
--- Table `tradecus`.`tipo_doc`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `tradecus`.`tipo_doc` (
-  `id_tipo_doc` INT NOT NULL AUTO_INCREMENT,
-  `nombre_doc` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id_tipo_doc`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -117,17 +95,17 @@ CREATE TABLE IF NOT EXISTS `tradecus`.`cliente_contacto` (
   `aplellidos_cli` VARCHAR(80) NOT NULL,
   `email_cli` VARCHAR(120) NOT NULL,
   `celular_cli` VARCHAR(20) NOT NULL,
-  `id_reserva` INT NOT NULL,
   `id_tipo_doc` INT NOT NULL,
-  PRIMARY KEY (`id_cliente`, `id_reserva`, `id_tipo_doc`),
-  INDEX `fk_cliente_contacto_reserva1_idx` (`id_reserva` ASC) VISIBLE,
+  `id_usuario` INT NOT NULL,
+  PRIMARY KEY (`id_cliente`, `id_tipo_doc`, `id_usuario`),
   INDEX `fk_cliente_contacto_tipo_doc1_idx` (`id_tipo_doc` ASC) VISIBLE,
-  CONSTRAINT `fk_cliente_contacto_reserva1`
-    FOREIGN KEY (`id_reserva`)
-    REFERENCES `tradecus`.`reserva` (`id_reserva`),
+  INDEX `fk_cliente_contacto_usuario1_idx` (`id_usuario` ASC) VISIBLE,
   CONSTRAINT `fk_cliente_contacto_tipo_doc1`
     FOREIGN KEY (`id_tipo_doc`)
-    REFERENCES `tradecus`.`tipo_doc` (`id_tipo_doc`)
+    REFERENCES `tradecus`.`tipo_doc` (`id_tipo_doc`),
+  CONSTRAINT `fk_cliente_contacto_usuario1`
+    FOREIGN KEY (`id_usuario`)
+    REFERENCES `tradecus`.`usuario` (`id_usuario`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -145,6 +123,28 @@ CREATE TABLE IF NOT EXISTS `tradecus`.`metodo_pago` (
   PRIMARY KEY (`id_metodo_pago`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 7
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `tradecus`.`reserva`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `tradecus`.`reserva` (
+  `id_reserva` INT NOT NULL AUTO_INCREMENT,
+  `codigo_reserva` VARCHAR(8) NOT NULL,
+  `fecha_reserva` DATE NOT NULL,
+  `fecha_llegada` DATE NOT NULL,
+  `num_visitantes` INT NOT NULL,
+  `precio_reserva` DECIMAL(7,2) NOT NULL,
+  `fecha_creado` TIMESTAMP NULL DEFAULT NULL,
+  `id_usuario` INT NOT NULL,
+  PRIMARY KEY (`id_reserva`, `id_usuario`),
+  INDEX `fk_reserva_usuario1_idx` (`id_usuario` ASC) VISIBLE,
+  CONSTRAINT `fk_reserva_usuario1`
+    FOREIGN KEY (`id_usuario`)
+    REFERENCES `tradecus`.`usuario` (`id_usuario`))
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -193,8 +193,8 @@ CREATE TABLE IF NOT EXISTS `tradecus`.`visitante` (
   `fecha_nacimiento_vis` DATE NOT NULL,
   `numero_doc_vis` VARCHAR(18) NOT NULL,
   `id_tipo_doc` INT NOT NULL,
-  `cliente_contacto_id` INT NULL DEFAULT NULL,
-  PRIMARY KEY (`id_visitante`, `id_tipo_doc`),
+  `cliente_contacto_id` INT NOT NULL,
+  PRIMARY KEY (`id_visitante`, `id_tipo_doc`, `cliente_contacto_id`),
   INDEX `fk_visitante_tipo_doc1_idx` (`id_tipo_doc` ASC) VISIBLE,
   INDEX `cliente_contacto_id` (`cliente_contacto_id` ASC) VISIBLE,
   CONSTRAINT `fk_visitante_tipo_doc1`
@@ -226,6 +226,9 @@ CREATE TABLE IF NOT EXISTS `tradecus`.`detalle_reserva` (
   INDEX `fk_detalle_reserva_metodo_pago1_idx` (`id_metodo_pago` ASC) VISIBLE,
   INDEX `fk_detalle_reserva_servicio_adicional1_idx` (`id_serv_adicional` ASC) VISIBLE,
   INDEX `fk_detalle_reserva_cabecera1_idx` (`cabecera_id` ASC) VISIBLE,
+  CONSTRAINT `fk_detalle_reserva_cabecera1`
+    FOREIGN KEY (`cabecera_id`)
+    REFERENCES `mydb`.`cabecera` (`id`),
   CONSTRAINT `fk_detalle_reserva_metodo_pago1`
     FOREIGN KEY (`id_metodo_pago`)
     REFERENCES `tradecus`.`metodo_pago` (`id_metodo_pago`),
@@ -240,12 +243,7 @@ CREATE TABLE IF NOT EXISTS `tradecus`.`detalle_reserva` (
     REFERENCES `tradecus`.`tour` (`id_tour`),
   CONSTRAINT `fk_detalle_reserva_visitante1`
     FOREIGN KEY (`id_visitate`)
-    REFERENCES `tradecus`.`visitante` (`id_visitante`),
-  CONSTRAINT `fk_detalle_reserva_cabecera1`
-    FOREIGN KEY (`cabecera_id`)
-    REFERENCES `mydb`.`cabecera` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    REFERENCES `tradecus`.`visitante` (`id_visitante`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
@@ -303,9 +301,7 @@ CREATE TABLE IF NOT EXISTS `tradecus`.`imagenes` (
   INDEX `fk_imagenes_tour1_idx1` (`tour_id` ASC) VISIBLE,
   CONSTRAINT `fk_imagenes_tour1`
     FOREIGN KEY (`tour_id`)
-    REFERENCES `tradecus`.`tour` (`id_tour`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    REFERENCES `tradecus`.`tour` (`id_tour`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 73
 DEFAULT CHARACTER SET = utf8mb4

@@ -8,6 +8,11 @@ export const updateTour = async (req, res) => {
     duracion_tour,
     descripcion_tour,
     estado_tour,
+    atractivo_tour,
+    tipo_transporte,
+    duracion_viaje,
+    distancia_recorrido,
+    id_transporte
   } = req.body;
 
   try {
@@ -37,19 +42,38 @@ export const updateTour = async (req, res) => {
         .json({ msg: "No se encontró el tour especificado" });
     }
 
+    const [resultado] = await pool.query(
+      `UPDATE detalle_tour SET 
+         atractivo_tour = IFNULL(?, atractivo_tour),
+         tipo_transporte = IFNULL(?, tipo_transporte),
+         duracion_viaje = IFNULL(?, duracion_viaje),
+         distancia_recorrido = IFNULL(?, distancia_recorrido),
+         id_transporte = IFNULL(?, id_transporte)
+         WHERE id_tour = ?`,
+      [atractivo_tour, tipo_transporte, duracion_viaje, distancia_recorrido, id_transporte, id]
+    );
+    if (!resultado.affectedRows) {
+      return res
+        .status(404)
+        .json({ msg: "No se actualizaron detalles de tour" });
+    }
+
+    
     const [rows] = await pool.query(
-      `SELECT tour.*, imagenes.*
+      `SELECT tour.*, imagenes.*, detalle_tour.*
        FROM tour
        INNER JOIN imagenes
-       ON tour.id_tour = imagenes.tour_id_tour
+       ON tour.id_tour = imagenes.tour_id
+       INNER JOIN detalle_tour
+       ON tour.id_tour = detalle_tour.id_tour
        WHERE tour.id_tour = ?`,
       [id]
     );
 
     if (!rows.length) {
-      return res
-        .status(404)
-        .json({ msg: "No se encontró el tour especificado" });
+      return res.status(404).json({
+        msg: "No se encontró el tour especificado no se actualizó la imagen",
+      });
     }
 
     const tour = {
@@ -61,6 +85,13 @@ export const updateTour = async (req, res) => {
       descripcion_tour: rows[0].descripcion_tour,
       estado_tour: rows[0].estado_tour,
       imagenes: [],
+      detalle: {
+        atractivo_tour: rows[0].atractivo_tour,
+        tipo_transporte: rows[0].tipo_transporte,
+        duracion_viaje: rows[0].duracion_viaje,
+        distancia_recorrido: rows[0].distancia_recorrido,
+        id_transporte: rows[0].id_transporte
+      },
     };
 
     for (let i = 0; i < rows.length; i++) {
@@ -68,7 +99,7 @@ export const updateTour = async (req, res) => {
         id_img: rows[i].id_img,
         nombre_img: rows[i].nombre_img,
         url_img: rows[i].url_img,
-        tour_id_tour: rows[i].tour_id_tour,
+        tour_id: rows[i].tour_id,
       };
       tour.imagenes.push(imagen);
     }

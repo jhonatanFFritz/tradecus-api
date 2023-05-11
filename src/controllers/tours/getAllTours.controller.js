@@ -5,12 +5,12 @@ export const getAllTours = async (req, res) => {
     const [rows] = await pool.query(`
       SELECT tour.*, imagenes.*
       FROM tour
-      INNER JOIN imagenes ON tour.id_tour = imagenes.tour_id_tour
+      INNER JOIN imagenes ON tour.id_tour = imagenes.tour_id
       ORDER BY tour.id_tour ASC, imagenes.id_img ASC
     `);
     
     if (!rows.length) {
-      return res.status(404).json({ msg: "No se pueden listar los tours" });
+      return res.status(404).json({ msg: "No hay registros para mostrar" });
     }
 
     const tours = [];
@@ -37,7 +37,7 @@ export const getAllTours = async (req, res) => {
           id_img: row.id_img,
           nombre_img: row.nombre_img,
           url_img: row.url_img,
-          tour_id_tour: row.tour_id_tour,
+          tour_id: row.tour_id,
         };
         currentTour.imagenes.push(imagen);
       }

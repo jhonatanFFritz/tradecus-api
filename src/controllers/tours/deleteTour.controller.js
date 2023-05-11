@@ -5,7 +5,8 @@ export const deleteTour = async (req, res) => {
 
   try {
     // Primero, eliminamos las imágenes del tour
-    await pool.query("DELETE FROM imagenes WHERE tour_id_tour = ?", [id]);
+    await pool.query("DELETE FROM imagenes WHERE tour_id = ?", [id]);
+    await pool.query("DELETE FROM detalle_tour WHERE id_tour = ?", [id]);
 
     // Luego, eliminamos el tour
     const [result] = await pool.query("DELETE FROM tour WHERE id_tour = ?", [id]);

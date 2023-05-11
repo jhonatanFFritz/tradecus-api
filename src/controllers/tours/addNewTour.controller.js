@@ -12,7 +12,7 @@ export const addNewTour = async (req, res) => {
     tipo_transporte,
     duracion_viaje,
     distancia_recorrido,
-    medio_transporte_id_transporte,
+    id_transporte,
   } = req.body;
   const images = req.files;
 
@@ -32,17 +32,17 @@ export const addNewTour = async (req, res) => {
         estado_tour,
       ]
     );
-    const tour_id_tour = rows.insertId;
+    const id_tour = rows.insertId;
 
     await connection.query(
-      "INSERT INTO detalle_tour(atractivo_tour, tipo_transporte, duracion_viaje, distancia_recorrido, tour_id_tour, medio_transporte_id_transporte) VALUES (?, ?, ?, ?, ?, ?)",
+      "INSERT INTO detalle_tour(atractivo_tour, tipo_transporte, duracion_viaje, distancia_recorrido, id_tour, id_transporte) VALUES (?, ?, ?, ?, ?, ?)",
       [
         atractivo_tour,
         tipo_transporte,
         duracion_viaje,
         distancia_recorrido,
-        tour_id_tour,
-        medio_transporte_id_transporte,
+        id_tour,
+        id_transporte,
       ]
     );
 
@@ -50,8 +50,8 @@ export const addNewTour = async (req, res) => {
       const { filename, path } = images[i];
 
       await connection.query(
-        "INSERT INTO imagenes(nombre_img, url_img, tour_id_tour) VALUES (?, ?, ?)",
-        [filename, path, tour_id_tour]
+        "INSERT INTO imagenes(nombre_img, url_img, tour_id) VALUES (?, ?, ?)",
+        [filename, path, id_tour]
       );
     }
 
@@ -69,9 +69,9 @@ export const addNewTour = async (req, res) => {
       tipo_transporte,
       duracion_viaje,
       distancia_recorrido,
-      medio_transporte_id_transporte,
+      id_transporte,
       images,
-      tour_id_tour,
+      id_tour,
     });
   } catch (error) {
     await connection.rollback();
