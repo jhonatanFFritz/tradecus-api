@@ -33,6 +33,7 @@ import { updateTour } from "../controllers/tours/updateTour.controller.js";
 import { updateTourImg } from "../controllers/tours/updateTourImg.controller.js";
 import { deleteTour } from "../controllers/tours/deleteTour.controller.js";
 import { removeTourImg } from "../controllers/tours/removeTourImg.controller.js";
+import { getTourDetails } from "../controllers/tours/getTourDetails.controller.js"; 
 
 const router = Router();
 router.get("/tour", getAllTours);
@@ -54,5 +55,8 @@ router.patch(
 
 router.delete("/tour/:id", deleteTour);
 router.delete("/tour/:id/imagen/:imgId", removeTourImg);
+
+// Endpoint para obtener los detalles de un tour
+router.get("/tour/details/:id", getTourDetails);
 
 export default router;
